@@ -7,6 +7,7 @@ Overview
 AutoApply is a Chrome extension that helps users fill out job application forms automatically using a saved profile. This privacy policy explains what data is collected, how it is stored, and your rights as a user.
 The short version: your data never leaves your browser. AutoApply has no servers, no accounts, no analytics, and no ability to transmit your information anywhere.
 
+
 What data we collect
 AutoApply collects only information that you voluntarily enter into the profile editor. This may include:
 
