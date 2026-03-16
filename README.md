@@ -1,7 +1,5 @@
 # AutoApply
 
-Here's a complete privacy policy you can host and link to. You'll need to put it on a public URL — the easiest free options are a GitHub page, Google Sites, or Notion public page.
-
 AutoApply — Privacy Policy
 Last updated: March 16, 2026
 
