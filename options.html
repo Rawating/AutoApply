@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Security: no inline scripts allowed from external sources -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; img-src 'self' data:; connect-src 'none';">
+  <title>AutoApply — Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0a0a0b;
+      --surface:  #111113;
+      --card:     #16161a;
+      --border:   rgba(255,255,255,0.07);
+      --border2:  rgba(255,255,255,0.12);
+      --accent:   #f5c842;
+      --accent2:  #4ade80;
+      --text:     #f0eff0;
+      --muted:    #6b6a72;
+      --muted2:   #9998a3;
+      --danger:   #f87171;
+      --sidebar:  200px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Geist', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .shell { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      overflow-y: auto;
+      z-index: 50;
+    }
+
+    .brand {
+      padding: 24px 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-wordmark {
+      font-family: 'Instrument Serif', serif;
+      font-size: 20px;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+    }
+    .brand-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 3px;
+    }
+
+    .nav { padding: 14px 10px; flex: 1; }
+    .nav-group-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      padding: 10px 8px 6px;
+    }
+
+    .nav-btn {
+      display: flex; align-items: center; gap: 9px;
+      width: 100%; padding: 7px 10px;
+      background: none; border: none; border-radius: 7px;
+      color: var(--muted2); font-family: 'Geist', sans-serif;
+      font-size: 13px; font-weight: 400;
+      cursor: pointer; text-align: left;
+      transition: background 0.12s, color 0.12s;
+      position: relative;
+    }
+    .nav-btn:hover  { background: rgba(255,255,255,0.04); color: var(--text); }
+    .nav-btn.active { background: rgba(245,200,66,0.08); color: var(--accent); font-weight: 500; }
+    .nav-btn.active::before {
+      content: '';
+      position: absolute; left: 0; top: 20%; bottom: 20%;
+      width: 2px; border-radius: 2px;
+      background: var(--accent);
+    }
+    .nav-icon { font-size: 14px; opacity: 0.8; }
+
+    /* ── Main ───────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar);
+      flex: 1;
+      padding: 40px 48px 120px;
+      max-width: calc(var(--sidebar) + 780px);
+    }
+
+    /* ── Sections ───────────────────────────────────────────── */
+    .section { display: none; }
+    .section.active { display: block; animation: fadeUp 0.18s ease; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-head { margin-bottom: 28px; }
+    .section-head h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 28px; font-weight: 400;
+      color: var(--text); letter-spacing: -0.4px;
+    }
+    .section-head p { font-size: 13px; color: var(--muted2); margin-top: 5px; }
+
+    /* ── Cards ──────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+    }
+    .card-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-label::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Grid ───────────────────────────────────────────────── */
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .g1 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .s2 { grid-column: span 2; }
+    .s3 { grid-column: span 3; }
+
+    /* ── Fields ─────────────────────────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field > label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--muted2);
+    }
+
+    input, textarea, select {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Geist', sans-serif;
+      font-size: 13px;
+      padding: 9px 12px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(245,200,66,0.1);
+    }
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+    textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6a72' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+    select option { background: #16161a; }
+
+    /* ── Entries (work/edu) ─────────────────────────────────── */
+    .entries { display: flex; flex-direction: column; gap: 12px; }
+    .entry {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .entry-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .entry-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .btn-rm {
+      background: none; border: 1px solid var(--border2);
+      color: var(--danger); border-radius: 6px;
+      padding: 3px 11px; font-size: 11px;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer; transition: all 0.12s;
+    }
+    .btn-rm:hover { background: var(--danger); color: var(--bg); border-color: var(--danger); }
+
+    .btn-add {
+      width: 100%; background: none;
+      border: 1px dashed var(--border2);
+      color: var(--muted); border-radius: 8px;
+      padding: 10px; font-size: 12px;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer; margin-top: 10px;
+      transition: all 0.12s;
+    }
+    .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Tags ───────────────────────────────────────────────── */
+    .tag-wrap {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      min-height: 44px; align-items: flex-start;
+      cursor: text; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .tag-wrap:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(245,200,66,0.1);
+    }
+    .tag {
+      background: rgba(245,200,66,0.1);
+      border: 1px solid rgba(245,200,66,0.2);
+      border-radius: 5px; padding: 3px 8px;
+      font-size: 12px; display: flex; align-items: center; gap: 5px;
+      color: var(--accent);
+    }
+    .tag-x { cursor: pointer; opacity: 0.6; font-size: 15px; line-height: 1; }
+    .tag-x:hover { opacity: 1; color: var(--danger); }
+    .tag-input {
+      border: none; background: none; outline: none;
+      font-size: 13px; color: var(--text); font-family: 'Geist', sans-serif;
+      min-width: 130px; padding: 2px 4px; flex: 1;
+    }
+    .tag-hint { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+    /* ── Custom field rows ──────────────────────────────────── */
+    .cfield-row {
+      display: grid; grid-template-columns: 1fr 2fr auto;
+      gap: 8px; align-items: center; margin-bottom: 8px;
+    }
+    .btn-del {
+      background: none; border: 1px solid var(--border2);
+      color: var(--muted); border-radius: 6px;
+      padding: 8px 10px; cursor: pointer; font-size: 13px;
+      transition: all 0.12s;
+    }
+    .btn-del:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── Security badge ─────────────────────────────────────── */
+    .security-note {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(74,222,128,0.06);
+      border: 1px solid rgba(74,222,128,0.15);
+      border-radius: 8px; padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .security-note .icon { font-size: 15px; margin-top: 1px; }
+    .security-note p { font-size: 12px; color: var(--muted2); line-height: 1.6; }
+    .security-note strong { color: var(--accent2); font-weight: 500; }
+
+    /* ── Save bar ───────────────────────────────────────────── */
+    .save-bar {
+      position: fixed; bottom: 0;
+      left: var(--sidebar); right: 0;
+      background: rgba(10,10,11,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 14px 48px;
+      display: flex; align-items: center; gap: 14px;
+      z-index: 100;
+    }
+    .btn-save {
+      background: var(--accent); color: #0a0a0b;
+      border: none; border-radius: 8px;
+      padding: 9px 28px; font-size: 13px; font-weight: 600;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer; transition: background 0.12s, transform 0.1s;
+    }
+    .btn-save:hover  { background: #f7d45a; }
+    .btn-save:active { transform: scale(0.98); }
+    .save-ok {
+      font-size: 12px; font-family: 'Geist Mono', monospace;
+      color: var(--accent2); font-weight: 500;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .save-ok.show { opacity: 1; }
+    .save-note { font-size: 11px; color: var(--muted); margin-left: auto; display: flex; align-items: center; gap: 5px; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar" role="navigation" aria-label="Profile sections">
+    <div class="brand">
+      <div class="brand-wordmark">AutoApply</div>
+      <div class="brand-tag">Profile Editor</div>
+    </div>
+    <div class="nav">
+      <div class="nav-group-label">Your Info</div>
+      <button class="nav-btn active" data-sec="personal" aria-current="page"><span class="nav-icon">👤</span> Personal</button>
+      <button class="nav-btn" data-sec="address"><span class="nav-icon">📍</span> Address</button>
+      <button class="nav-btn" data-sec="work"><span class="nav-icon">💼</span> Work History</button>
+      <button class="nav-btn" data-sec="education"><span class="nav-icon">🎓</span> Education</button>
+      <button class="nav-btn" data-sec="skills"><span class="nav-icon">⚡</span> Skills</button>
+      <button class="nav-btn" data-sec="links"><span class="nav-icon">🔗</span> Links</button>
+      <div class="nav-group-label">Preferences</div>
+      <button class="nav-btn" data-sec="jobprefs"><span class="nav-icon">🎯</span> Job Prefs</button>
+      <button class="nav-btn" data-sec="eeo"><span class="nav-icon">🏳️</span> EEO</button>
+      <button class="nav-btn" data-sec="extra"><span class="nav-icon">💬</span> Cover Letter</button>
+      <button class="nav-btn" data-sec="custom"><span class="nav-icon">✏️</span> Custom</button>
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <main class="main" role="main">
+
+    <!-- Personal -->
+    <div class="section active" id="sec-personal" role="region" aria-labelledby="h-personal">
+      <div class="section-head">
+        <h1 id="h-personal">Personal Info</h1>
+        <p>Your core identity — used on every application automatically.</p>
+      </div>
+      <div class="security-note">
+        <span class="icon">🔒</span>
+        <p><strong>Stored locally and securely.</strong> Your data never leaves your browser. AutoApply uses Chrome's encrypted storage API — no servers, no tracking, no third parties ever see your information.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Name</div>
+        <div class="g3">
+          <div class="field">
+            <label for="prefix">Prefix</label>
+            <select id="prefix">
+              <option value="">None</option>
+              <option>Mr.</option><option>Ms.</option><option>Mrs.</option>
+              <option>Dr.</option><option>Prof.</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="firstName">First Name</label>
+            <input id="firstName" type="text" placeholder="Jane" autocomplete="off" spellcheck="false"/>
+          </div>
+          <div class="field">
+            <label for="middleName">Middle Name</label>
+            <input id="middleName" type="text" placeholder="Lee" autocomplete="off" spellcheck="false"/>
+          </div>
+          <div class="field">
+            <label for="lastName">Last Name</label>
+            <input id="lastName" type="text" placeholder="Smith" autocomplete="off" spellcheck="false"/>
+          </div>
+          <div class="field">
+            <label for="suffix">Suffix</label>
+            <select id="suffix">
+              <option value="">None</option>
+              <option>Jr.</option><option>Sr.</option><option>II</option><option>III</option><option>IV</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="preferredName">Preferred / Nickname</label>
+            <input id="preferredName" type="text" placeholder="Jay" autocomplete="off" spellcheck="false"/>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Contact</div>
+        <div class="g2">
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input id="email" type="email" placeholder="jane@example.com" autocomplete="off" spellcheck="false"/>
+          </div>
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input id="phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="off" spellcheck="false"/>
+          </div>
+          <div class="field">
+            <label for="phoneType">Phone Device Type</label>
+            <select id="phoneType">
+              <option value="">Select…</option>
+              <option>Mobile</option><option>Home</option><option>Work</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="pronouns">Pronouns</label>
+            <input id="pronouns" type="text" placeholder="she/her" autocomplete="off"/>
+          </div>
+          <div class="field">
+            <label for="dob">Date of Birth</label>
+            <input id="dob" type="date" autocomplete="off"/>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Professional Summary</div>
+        <div class="g1">
+          <div class="field">
+            <label for="summary">Bio / Summary</label>
+            <textarea id="summary" rows="4" placeholder="2–3 sentences about who you are professionally. Used for cover letter and bio fields."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="section" id="sec-address" role="region" aria-labelledby="h-address">
+      <div class="section-head">
+        <h1 id="h-address">Address</h1>
+        <p>Your home address — filled into location and mailing fields.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Home Address</div>
+        <div class="g2">
+          <div class="field s2"><label for="street">Street Address</label><input id="street" type="text" placeholder="123 Main St" autocomplete="off" spellcheck="false"/></div>
+          <div class="field s2"><label for="apt">Apt / Suite / Unit</label><input id="apt" type="text" placeholder="Apt 4B" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="city">City</label><input id="city" type="text" placeholder="New York" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="state">State / Province</label><input id="state" type="text" placeholder="NY" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="zip">ZIP / Postal Code</label><input id="zip" type="text" placeholder="10001" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="country">Country</label><input id="country" type="text" placeholder="United States" autocomplete="off" spellcheck="false"/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Work -->
+    <div class="section" id="sec-work" role="region" aria-labelledby="h-work">
+      <div class="section-head">
+        <h1 id="h-work">Work History</h1>
+        <p>Most recent position first. Used to fill employer, title, and experience fields.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Experience</div>
+        <div class="entries" id="work-entries"></div>
+        <button class="btn-add" id="add-work" type="button">+ Add Position</button>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="section" id="sec-education" role="region" aria-labelledby="h-edu">
+      <div class="section-head">
+        <h1 id="h-edu">Education</h1>
+        <p>Your degrees and academic background.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Degrees</div>
+        <div class="entries" id="edu-entries"></div>
+        <button class="btn-add" id="add-edu" type="button">+ Add Education</button>
+      </div>
+      <div class="card">
+        <div class="card-label">Highest Level Achieved</div>
+        <div class="g1">
+          <div class="field">
+            <label for="highestEdu">Highest Degree</label>
+            <select id="highestEdu">
+              <option value="">Select…</option>
+              <option>High School Diploma / GED</option>
+              <option>Some College</option>
+              <option>Associate's Degree</option>
+              <option>Bachelor's Degree</option>
+              <option>Master's Degree</option>
+              <option>Doctoral Degree (PhD)</option>
+              <option>Professional Degree (JD, MD, etc.)</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="section" id="sec-skills" role="region" aria-labelledby="h-skills">
+      <div class="section-head">
+        <h1 id="h-skills">Skills</h1>
+        <p>Type a skill and press <kbd style="background:rgba(255,255,255,0.07);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-size:11px;">Enter</kbd> or comma to add it.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Technical Skills</div>
+        <div class="tag-wrap" id="tech-skills-wrap"><input class="tag-input" id="tech-skill-input" placeholder="e.g. Python, React, SQL…" autocomplete="off"/></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Soft Skills</div>
+        <div class="tag-wrap" id="soft-skills-wrap"><input class="tag-input" id="soft-skill-input" placeholder="e.g. Leadership, Communication…" autocomplete="off"/></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Languages</div>
+        <div class="tag-wrap" id="lang-wrap"><input class="tag-input" id="lang-input" placeholder="e.g. English (native), Spanish (fluent)…" autocomplete="off"/></div>
+        <p class="tag-hint">Include proficiency level — some apps ask for it in the same field.</p>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="section" id="sec-links" role="region" aria-labelledby="h-links">
+      <div class="section-head">
+        <h1 id="h-links">Links &amp; Social</h1>
+        <p>Used for portfolio, LinkedIn, and website fields across all platforms.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">URLs</div>
+        <div class="g2">
+          <div class="field"><label for="linkedin">LinkedIn</label><input id="linkedin" type="url" placeholder="https://linkedin.com/in/…" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="github">GitHub</label><input id="github" type="url" placeholder="https://github.com/…" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="portfolio">Portfolio / Website</label><input id="portfolio" type="url" placeholder="https://yoursite.com" autocomplete="off" spellcheck="false"/></div>
+          <div class="field"><label for="otherLink">Other Link</label><input id="otherLink" type="url" placeholder="https://…" autocomplete="off" spellcheck="false"/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Prefs -->
+    <div class="section" id="sec-jobprefs" role="region" aria-labelledby="h-prefs">
+      <div class="section-head">
+        <h1 id="h-prefs">Job Preferences</h1>
+        <p>Answers to common compensation and eligibility questions.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Compensation &amp; Setup</div>
+        <div class="g3">
+          <div class="field"><label for="salary">Base Salary Expectation</label><input id="salary" type="text" placeholder="$90,000" autocomplete="off"/></div>
+          <div class="field">
+            <label for="workAuth">Work Authorization</label>
+            <select id="workAuth">
+              <option value="">Select…</option>
+              <option>US Citizen</option><option>Permanent Resident</option>
+              <option>H1B</option><option>OPT</option><option>TN Visa</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sponsorship">Visa Sponsorship Needed?</label>
+            <select id="sponsorship">
+              <option value="">Select…</option><option>No</option><option>Yes</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="remote">Remote Preference</label>
+            <select id="remote">
+              <option value="">Select…</option>
+              <option>Remote</option><option>Hybrid</option><option>On-site</option><option>Any</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="empType">Employment Type</label>
+            <select id="empType">
+              <option value="">Select…</option>
+              <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
+            </select>
+          </div>
+          <div class="field"><label for="startDate">Available Start Date</label><input id="startDate" type="text" placeholder="Immediately / 2 weeks" autocomplete="off"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Legal</div>
+        <div class="g2">
+          <div class="field">
+            <label for="nonCompete">Non-compete / IP Agreement Signed?</label>
+            <select id="nonCompete">
+              <option value="">Select…</option><option>No</option><option>Yes</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="prevEmployed">Former Employee Here? (default answer)</label>
+            <select id="prevEmployed">
+              <option value="No">No</option><option value="Yes">Yes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EEO -->
+    <div class="section" id="sec-eeo" role="region" aria-labelledby="h-eeo">
+      <div class="section-head">
+        <h1 id="h-eeo">EEO / Demographics</h1>
+        <p>Voluntary self-identification for government reporting fields. Completely optional.</p>
+      </div>
+      <div class="security-note">
+        <span class="icon">🔒</span>
+        <p><strong>This information is sensitive.</strong> It is stored only in your browser's local storage. AutoApply never transmits, logs, or shares this data anywhere. You are always in control of what gets filled.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Self-Identification</div>
+        <div class="g2">
+          <div class="field">
+            <label for="gender">Gender</label>
+            <select id="gender">
+              <option value="">Prefer not to say</option>
+              <option>Male</option><option>Female</option><option>Non-binary</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="race">Race / Ethnicity</label>
+            <select id="race">
+              <option value="">Select…</option>
+              <option>White</option>
+              <option>Black or African American</option>
+              <option>Asian</option>
+              <option>American Indian or Alaska Native</option>
+              <option>Native Hawaiian or Other Pacific Islander</option>
+              <option>Two or More Races</option>
+              <option>I prefer not to answer</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="veteran">Veteran Status</label>
+            <select id="veteran">
+              <option value="">Select…</option>
+              <option value="I am not a protected veteran">Not a protected veteran</option>
+              <option value="I identify as a protected veteran">Protected veteran</option>
+              <option value="I prefer not to answer">Prefer not to answer</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="disability">Disability Status</label>
+            <select id="disability">
+              <option value="">Select…</option>
+              <option value="No, I do not have a disability">No disability</option>
+              <option value="Yes, I have a disability">Yes, I have a disability</option>
+              <option value="I prefer not to answer">Prefer not to answer</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cover Letter -->
+    <div class="section" id="sec-extra" role="region" aria-labelledby="h-extra">
+      <div class="section-head">
+        <h1 id="h-extra">Cover Letter</h1>
+        <p>Written once, auto-filled into "tell us about yourself" and cover letter fields.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Cover Letter / Why You're a Good Fit</div>
+        <div class="g1">
+          <div class="field">
+            <label for="coverLetter">Your Cover Letter</label>
+            <textarea id="coverLetter" rows="10" placeholder="Tell us about yourself and why you'd be a great fit for this role…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom -->
+    <div class="section" id="sec-custom" role="region" aria-labelledby="h-custom">
+      <div class="section-head">
+        <h1 id="h-custom">Custom Fields</h1>
+        <p>Add anything extra. The field name is matched against form labels on the page.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Extra Fields</div>
+        <div id="custom-fields-list"></div>
+        <button class="btn-add" id="add-custom" type="button">+ Add Custom Field</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="save-bar" role="contentinfo">
+  <button class="btn-save" id="save-btn" type="button">Save Profile</button>
+  <span class="save-ok" id="save-ok" role="status" aria-live="polite">✓ Profile saved</span>
+  <span class="save-note">🔒 Saved locally — never uploaded</span>
+</div>
+
+<script src="options.js"></script>
+</body>
+</html>

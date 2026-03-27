@@ -1,62 +1,58 @@
-# AutoApply
+# AutoApply – Chrome Extension
 
-AutoApply — Privacy Policy
-Last updated: March 16, 2026
+Auto-fill job application forms with your saved profile. Fill your info once, use it everywhere.
 
-Overview
-AutoApply is a Chrome extension that helps users fill out job application forms automatically using a saved profile. This privacy policy explains what data is collected, how it is stored, and your rights as a user.
-The short version: your data never leaves your browser. AutoApply has no servers, no accounts, no analytics, and no ability to transmit your information anywhere.
+## Installation
 
+1. **Open Chrome** and go to `chrome://extensions`
+2. **Enable Developer Mode** (toggle in the top-right corner)
+3. Click **"Load unpacked"**
+4. Select the `job-filler-extension` folder you downloaded
+5. The AutoApply icon will appear in your Chrome toolbar
 
-What data we collect
-AutoApply collects only information that you voluntarily enter into the profile editor. This may include:
+## Setup
 
-Full name, preferred name, and pronouns
-Email address and phone number
-Home address
-Work history including employer names and job titles
-Education history including school names and degrees
-Professional links such as LinkedIn, GitHub, and portfolio URLs
-Job preferences such as salary expectations and work authorization status
-Voluntary EEO self-identification fields such as gender, race, veteran status, and disability status
-A cover letter or professional summary
+1. Click the AutoApply icon in the toolbar
+2. Click **"Edit Profile"** (or right-click the icon → Options)
+3. Fill in all your info across the sections:
+   - Personal Info (name, email, phone)
+   - Address
+   - Work History
+   - Education
+   - Skills
+   - Links & Social
+   - Job Preferences (salary, work auth, remote preference, etc.)
+   - Custom Fields (for anything else)
+4. Click **"Save Profile"**
 
-You are never required to fill in any field. All fields are optional.
+## Using It
 
-How your data is stored
-All data you enter is stored exclusively on your own device using Chrome's built-in chrome.storage API. This is the same encrypted storage system Chrome uses for your bookmarks and settings.
+1. Navigate to a job application form (Greenhouse, Lever, Workday, etc.)
+2. Click the AutoApply icon
+3. Click **"Fill This Page"**
+4. Fields matching your profile will be filled automatically
 
-No data is sent to any external server
-No data is sent to the developer
-No database exists anywhere that holds your information
-The extension has no backend, no cloud storage, and no account system
+## What Gets Filled
 
-If you have Chrome Sync enabled in your Google account settings, Chrome may sync your extension storage across your own devices. This sync occurs through your personal Google account and is governed by Google's Privacy Policy. AutoApply has no access to or visibility into this sync process.
+- First/last name, email, phone
+- Full address (street, city, state, zip, country)
+- Current job title and employer
+- Education (degree, school, graduation year)
+- LinkedIn, GitHub, portfolio URLs
+- Salary expectations
+- Work authorization / visa status
+- Remote work preference
+- EEO fields (gender, veteran, disability status)
+- Cover letter / summary text
+- Any custom fields you define
 
-How your data is used
-Your data is used for one purpose only: filling in job application form fields when you explicitly click "Fill This Page." The extension reads your saved profile, matches fields on the current job application page, and inserts your information. Nothing else is done with your data.
+## Tips
 
-What data we do not collect
-AutoApply does not collect, access, or transmit:
+- Fields already filled will NOT be overwritten
+- Works on React-based forms (Greenhouse, Lever, Workday, etc.)
+- Add custom fields for anything the extension doesn't cover by default
+- The extension only runs when you click "Fill" — it never fills automatically without your action
 
-Your browsing history
-Any content from pages you visit beyond reading form field attributes
-Passwords or authentication credentials
-Payment or financial information
-Any data from pages where you do not click Fill This Page
+## Supported Job Boards
 
-
-Third parties
-AutoApply does not share, sell, transfer, or disclose your data to any third party under any circumstances. There are no advertising partners, analytics providers, or data brokers involved with this extension.
-
-Data deletion
-To delete all data stored by AutoApply, uninstall the extension from Chrome. This permanently removes all stored profile data from your device. You can also clear individual fields in the profile editor at any time.
-
-Children's privacy
-AutoApply is not directed at children under the age of 13 and does not knowingly collect data from children.
-
-Changes to this policy
-If this privacy policy changes in a future version of the extension, the updated policy will be published at this URL and the "last updated" date above will be revised. Continued use of the extension after a policy change constitutes acceptance of the new policy.
-
-Contact
-If you have any questions about this privacy policy, you can reach the developer at the contact address listed on the Chrome Web Store listing page.
+Tested on: Greenhouse, Lever, Workday, BambooHR, Taleo, iCIMS, JazzHR, and most plain HTML forms.

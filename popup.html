@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>AutoApply</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #111;
+      color: #f0ede8;
+      width: 300px;
+      padding: 16px;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .logo { font-size: 17px; font-weight: 700; color: #e8c97a; }
+    .version { font-size: 10px; color: #5a5855; }
+
+    .status-box {
+      background: #1a1917;
+      border: 1px solid #2e2c29;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .status-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #5a5855; margin-bottom: 4px; }
+    .status-val { font-size: 13px; font-weight: 600; }
+    .status-val.ok     { color: #c4f0a8; }
+    .status-val.warn   { color: #e8c97a; }
+    .status-val.empty  { color: #f08080; }
+
+    .btn-fill {
+      background: #e8c97a; color: #111; border: none;
+      border-radius: 7px; padding: 11px; font-size: 13px;
+      font-weight: 700; cursor: pointer; width: 100%;
+      margin-bottom: 8px; transition: background 0.1s;
+    }
+    .btn-fill:hover:not(:disabled) { background: #f0d88a; }
+    .btn-fill:disabled { opacity: 0.4; cursor: default; }
+
+    .btn-secondary {
+      background: none; border: 1px solid #2e2c29; color: #7a7670;
+      border-radius: 7px; padding: 8px; font-size: 12px;
+      cursor: pointer; width: 100%; margin-bottom: 6px; transition: all 0.1s;
+    }
+    .btn-secondary:hover { border-color: #e8c97a; color: #e8c97a; }
+
+    .result { font-size: 12px; text-align: center; min-height: 18px; margin-top: 6px; font-weight: 600; }
+    .result.ok   { color: #c4f0a8; }
+    .result.warn { color: #e8c97a; }
+    .result.err  { color: #f08080; }
+
+    .divider { border: none; border-top: 1px solid #2e2c29; margin: 12px 0; }
+
+    .debug-box {
+      background: #1a1917;
+      border: 1px solid #2e2c29;
+      border-radius: 7px;
+      padding: 10px;
+      font-size: 11px;
+      font-family: monospace;
+      color: #7a7670;
+      max-height: 160px;
+      overflow-y: auto;
+      display: none;
+      line-height: 1.6;
+    }
+    .debug-box.show { display: block; }
+    .debug-row { display: flex; justify-content: space-between; gap: 8px; }
+    .debug-row span:first-child { color: #5a5855; }
+    .debug-row span:last-child  { color: #f0ede8; text-align: right; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .debug-row.missing span:last-child { color: #f08080; }
+
+    .btn-debug {
+      background: none; border: none; color: #5a5855; font-size: 11px;
+      cursor: pointer; width: 100%; text-align: center; padding: 4px;
+    }
+    .btn-debug:hover { color: #7a7670; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">AutoApply</div>
+    <div class="version">v1.0</div>
+  </div>
+
+  <div class="status-box">
+    <div class="status-label">Profile</div>
+    <div class="status-val" id="profile-status">Loading…</div>
+  </div>
+
+  <button class="btn-fill" id="fill-btn" disabled>⚡ Fill This Page</button>
+  <button class="btn-secondary" id="settings-btn">⚙ Edit Profile</button>
+
+  <div class="result" id="result"></div>
+
+  <hr class="divider"/>
+
+  <button class="btn-debug" id="debug-toggle">▾ show profile data</button>
+  <div class="debug-box" id="debug-box"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
